@@ -1,4 +1,7 @@
 import fetch from "node-fetch";
+import dotenv from "dotenv";
+
+dotenv.config(); // load .env when running locally
 
 export async function handler(event) {
   try {
@@ -8,7 +11,7 @@ export async function handler(event) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`, // reads from .env or Netlify
       },
       body: JSON.stringify({
         model: "deepseek-chat",
@@ -19,7 +22,9 @@ export async function handler(event) {
     const data = await response.json();
     return {
       statusCode: 200,
-      body: JSON.stringify({ output: data.choices?.[0]?.message?.content || "[No output]" }),
+      body: JSON.stringify({
+        output: data.choices?.[0]?.message?.content || "[No output]",
+      }),
     };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
